@@ -19,7 +19,6 @@ end
 end
 
 #----------- nist ----------
-
 for id in list
   url = "https://nvd.nist.gov/vuln/detail/CVE-2019-" + id
   doc = Nokogiri::HTML(open(url))
@@ -28,6 +27,7 @@ for id in list
   score = []
   cvss = []
   hyperlink = []
+  description = []
   poc = []
   x=1
   
@@ -37,6 +37,10 @@ for id in list
 
   doc.css('div#p_lt_WebPartZone1_zoneCenter_pageplaceholder_p_lt_WebPartZone1_zoneCenter_VulnerabilityDetail_VulnFormView_VulnHyperlinksPanel table tr td').each do |link|
     hyperlink << link.content 
+  end
+  
+  doc.css('table#p_lt_WebPartZone1_zoneCenter_pageplaceholder_p_lt_WebPartZone1_zoneCenter_VulnerabilityDetail_VulnFormView tr td div p').each do |link|
+    description << link.content 
   end
   
   0.upto(hyperlink.count/2-1) do |i|
@@ -57,15 +61,10 @@ for id in list
   unless poc.empty? || cvss.empty?
     cveid = id
     score = impact[0]
-    puts cveid,score,cvss,poc
+    puts cveid,description[0],score,cvss,poc
     puts "-------------"
   end 
 
-  # hash_impact=Hash[impact.map.with_index.to_a]
-  # hash_hyperlink=Hash[hyperlink.map.with_index.to_a]
-  # puts hash_impact["1642"],hash_impact[list[1]],hash_impact[list[2]]
-  # puts hash_hyperlink["1642"],hash_hyperlink[list[1]],hash_hyperlink[list[2]]
- 
 end
 
 
